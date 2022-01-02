@@ -9,7 +9,7 @@ class SituationView:
         self.inst = master
 
         self.inst.title("Automatizador - NBO2001")
-        self.inst.geometry('400x300')
+        self.inst.geometry('400x150')
 
         self.div_1 = Frame(self.inst)
         self.div_1['width'] = 350
@@ -23,18 +23,14 @@ class SituationView:
         self.div_2['pady'] = 10
         self.div_2.pack(side=TOP)
 
-        self.div_3 = Frame(self.inst)
-        self.div_3['width'] = 350
-        self.div_3['height'] = 100
-        self.div_3['pady'] = 10
-        self.div_3.pack(side=TOP)
-
-        self.exit = Button(self.div_3)
+        self.exit = Button(self.div_2)
         self.exit['text'] = "Sair"
         self.exit['command'] = self.inst.destroy
 
-        self.loc = Label(self.div_1, text="")     
-        self.loc.pack()   
+        self.loc = Label(self.div_1, text="")   
+        self.loc['width'] = 350
+        self.loc['height'] = 100  
+        self.loc.pack() 
 
         # self.buttonAlert = Button(self.div_1)
         # self.buttonAlert['command'] = self.alert

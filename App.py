@@ -10,6 +10,8 @@ from time import sleep
 from file_monitoration import folder_is_change
 from upload import conf_file_upload, up_files
 from SituationView import SituationView
+import speedtest
+
 
 # Code ..
 
@@ -75,24 +77,34 @@ if not conf.is_error():
 
 
             if change:
-                if not lg.authentication_validation():
-                    send_rg_in_base(lg, foldrs)
+                app.situation(f'Preparando para adicionar registros no sistema ...')   
+                send_rg_in_base(lg, foldrs, app)
+                while True:
+                    app.situation(f'Configurando arquivo para upload...')   
                     conf_file_upload()
-                    up_files(lg)
+                    app.situation(f'Verificando velocidade da internet ... ')
+                    st = speedtest.Speedtest() 
+                    st.get_best_server()
+                    bytes_val = st.upload()
+                    Megabits = bytes_val/1048576
+                    MegaBytes = Megabits/8
+                    app.situation(f'Velocidade da internet {MegaBytes:.2f}... ')
+                    app.situation(f'Começando upload..')   
+                    if up_files(lg, MegaBytes, app):
+                        break
 
             lg.driver.close()
             app.situation("Conexão fechada")
             sleep(2)
             app.ext()
-        except:
-            print("Erroe")
-            sleep(15)
+        except Exception as error:
             try:
                 lg.driver.close()
             except:
                 pass
             finally:
-                app.situation("Ocorreu um erro que não soube lidar, \nprocure o desenvolvedor para encontar o problema")
+                
+                app.situation(f'Error: {error.__cause__} \nOcorreu um erro que não soube lidar, \nprocure o desenvolvedor para encontar o problema')
                 app.buttonExit()
 
     else:
