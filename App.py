@@ -15,101 +15,117 @@ import speedtest
 
 # Code ..
 
-conf = GlobalConfig()
+class App:
 
-if not conf.is_error():
-    root = Tk()
-    app = SituationView(root)
+    def start(self):
+        self.conf = GlobalConfig()
 
-    try:
-        boxs = file_is_exists(convert_url("./config/boxs.json"))
-    except:
-        boxs = False
-
-    try:    
-        change, foldrs = folder_is_change()
-    except:
-        change = False
-
-    if not boxs or plan_is_change(conf) or change:
-
-        app.situation("Esperando página carregar ...")
-        try:
-            lg = Login(conf.getUrlBase(),conf.getUser(),conf.getPassword(), conf.getClient(), True, app)
-
-            if lg.is_logout():
-                app.situation("Login feito com sucesso")
+        if not self.conf.is_error():
             
-            app.situation("Esperando página carregar ...")
+            self.root = Tk()
+            self.app = SituationView(self.root)
 
-            if lg.authentication_validation():
-                app.situation("Página carregada")
-
-            if not boxs:
-                app.situation("Começando a criação dos arquivos de configuração!!")
-                conf.mapping_boxs(lg, app)
-
-
-            if plan_is_change(conf):
-                app.situation("Lendo arquivos de configuração ...")
-                dt = reading_json(convert_url('./config/boxs'))
-                
-                if len(dt):
-                    dt = dt[(len(dt))-1]
-                    dt['boxs'] = dt['boxs'][(len(dt['boxs']))-1]
-                else:
-                    dt =  {}
-
-                app.situation("Preparando tudo para o envio ...")
-                upl = update_xlsx(dt)
-                
-                app.situation(f'Preparando para enviar {len(upl)} items')
-                for up in upl:
-                    
-                    app.situation(f'Inserindo a caixa: {up["index"]}')
-                    add_item(lg, up, app)
-                    
-                        
-                app.situation(f'Mapiando as informações ...')    
-                conf.mapping_boxs(lg, app)
-                app.situation(f'Finalizado')   
-
-
-
-            if change:
-                app.situation(f'Preparando para adicionar registros no sistema ...')   
-                send_rg_in_base(lg, foldrs, app)
-                while True:
-                    app.situation(f'Configurando arquivo para upload...')   
-                    conf_file_upload()
-                    app.situation(f'Verificando velocidade da internet ... ')
-                    st = speedtest.Speedtest() 
-                    st.get_best_server()
-                    bytes_val = st.upload()
-                    Megabits = bytes_val/1048576
-                    MegaBytes = Megabits/8
-                    app.situation(f'Velocidade da internet {MegaBytes:.2f}... ')
-                    app.situation(f'Começando upload..')   
-                    if up_files(lg, MegaBytes, app):
-                        break
-
-            lg.driver.close()
-            app.situation("Conexão fechada")
-            sleep(2)
-            app.ext()
-        except Exception as error:
             try:
-                lg.driver.close()
+                self.boxs = file_is_exists(convert_url("./config/boxs.json"))
             except:
-                pass
-            finally:
+                self.boxs = False
+
+            try:    
+                self.change, foldrs = folder_is_change()
+            except:
+                self.change = False
+
+            if not self.boxs or plan_is_change(self.conf) or self.change:
+
+                self.app.situation("Esperando página carregar ...")
+            
+                try:
+                    self.lg = Login(self.conf.getUrlBase(),self.conf.getUser(),self.conf.getPassword(), self.conf.getClient(), True, self.app)
+                except Exception as erro:
+                    print(f'Error: {erro.__cause__}')
+                    self.app.situation(f'Error: {erro.__cause__}')
+                    self.app.buttonExit()
+                else:
+                    if self.lg.is_logout():
+                        self.app.situation("Login feito com sucesso")
+                        
+                self.app.situation("Esperando página carregar ...")
+                try:
+                    if self.lg.authentication_validation():
+                        self.app.situation("Página carregada")
+                    
+                    if not self.boxs:
+                        self.box_change()
+
+                    if plan_is_change(self.conf):
+                        self.plan_change(self)
+
+                    if self.change:
+                        self.send_rg(self)
+                except Exception as erro:
+
+                    print(f'Error: {erro.__cause__}')
+                    self.app.situation(f'Error: {erro.__cause__}')
+                    self.app.situation(f'Error: {erro.__cause__}')
+                    self.lg.driver.close()
+                    self.app.buttonExit()
+
+                else:
+                    self.lg.driver.close()
+                    self.app.situation("Conexão fechada")
+                    sleep(2)
+                    self.app.ext()
+            else:
+                self.app.situation("Nenhuma mudança encontrada!!!")
+                sleep(3)
+                self.app.ext()
+            self.root.mainloop()
+
+    def box_change(self):
+        self.app.situation("Começando a criação dos arquivos de configuração!!")
+        self.conf.mapping_boxs(self.lg, self.app)
+        
+
+    def plan_change(self):
+        self.app.situation("Lendo arquivos de configuração ...")
+        self.dt = reading_json(convert_url('./config/boxs'))
+        
+        if len(self.dt):
+            self.dt = self.dt[(len(self.dt))-1]
+            self.dt['boxs'] = self.dt['boxs'][(len(self.dt['boxs']))-1]
+        else:
+            self.dt =  {}
+
+        self.app.situation("Preparando tudo para o envio ...")
+        self.upl = update_xlsx(self.dt)
+        
+        self.app.situation(f'Preparando para enviar {len(self.upl)} items')
+        for self.up in self.upl:
+            
+            self.app.situation(f'Inserindo a caixa: {self.up["index"]}')
+            add_item(self.lg, self.up, self.app)
+            
                 
-                app.situation(f'Error: {error.__cause__} \n Error: {error.__context__} \nOcorreu um erro que não soube lidar, \nprocure o desenvolvedor para encontar o problema')
-                app.buttonExit()
+        self.app.situation(f'Mapiando as informações ...')    
+        self.conf.mapping_boxs(self.lg, self.app)
+        self.app.situation(f'Finalizado')   
 
-    else:
-        app.situation("Nenhuma mudança encontrada!!!")
-        sleep(2)
-        app.ext()
-
-    root.mainloop()
+    def send_rg(self):
+        self.app.situation(f'Preparando para adicionar registros no sistema ...')   
+        send_rg_in_base(self.lg, self.foldrs, self.app)
+        while True:
+            self.app.situation(f'Configurando arquivo para upload...')   
+            conf_file_upload()
+            self.app.situation(f'Verificando velocidade da internet ... ')
+            st = speedtest.Speedtest() 
+            st.get_best_server()
+            bytes_val = st.upload()
+            Megabits = bytes_val/1048576
+            MegaBytes = Megabits/8
+            self.app.situation(f'Velocidade da internet {MegaBytes:.2f}... ')
+            self.app.situation(f'Começando upload..')   
+            if up_files(self.lg, MegaBytes, self.app):
+                break
+    
+init = App()
+init.start()
