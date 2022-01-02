@@ -159,11 +159,12 @@ def driving_to_box(instance, code):
     sleep(1)
     instance.driver.get(f'{instance.get_urlBase()}{get_link(instance)}')
 
-def add_folders(instance, boxs):
+def add_folders(instance, boxs, app=False):
     input_code = instance.driver.find_element_by_xpath("//app-pack-itens/mat-card/div/div[1]/mat-form-field/div/div[1]/div/input")
     button_code = instance.driver.find_element_by_xpath("//app-pack-itens/mat-card/div/div[1]/div/button")
 
     for box in boxs:
+        app.situation(f'Envindo a pasta: {box["index"]}') if app else print(f'Envindo a pasta: {box["index"]}') 
         input_code.send_keys(f'{trim(box["index"])}')
         button_code.click()
         sleep(1)

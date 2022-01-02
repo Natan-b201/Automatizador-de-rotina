@@ -67,7 +67,7 @@ if not conf.is_error():
                 for up in upl:
                     
                     app.situation(f'Inserindo a caixa: {up["index"]}')
-                    add_item(lg, up)
+                    add_item(lg, up, app)
                     
                         
                 app.situation(f'Mapiando as informações ...')    
@@ -104,7 +104,7 @@ if not conf.is_error():
                 pass
             finally:
                 
-                app.situation(f'Error: {error.__cause__} \nOcorreu um erro que não soube lidar, \nprocure o desenvolvedor para encontar o problema')
+                app.situation(f'Error: {error.__cause__} \n Error: {error.__context__} \nOcorreu um erro que não soube lidar, \nprocure o desenvolvedor para encontar o problema')
                 app.buttonExit()
 
     else:

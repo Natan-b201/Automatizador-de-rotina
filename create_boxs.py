@@ -10,12 +10,13 @@ from utils import add_informations
 from utils import trim
 
 
-def add_item(instance,data):
+def add_item(instance,data, app=False):
 
     instance.driver.get(f'{instance.get_urlBase()}#/modules/pack/create')
     sleep(2)
     
     if not is_exists_uep(data['index']):
+        app.situation(f'Envindo a caixa: {data["index"]}') if app else print(f'Envindo a caixa: {data["index"]}') 
         add_box(instance, data['galpao'], data['prateleira'], data['index'], data['client'])
         save_button(instance,True)
         alert_remove(instance)
@@ -53,7 +54,7 @@ def add_item(instance,data):
                     obs = box["obs"]
                 else:
                     obs = ""
-
+                app.situation(f'Envindo a pasta: {box["index"]}') if app else print(f'Envindo a pasta: {box["index"]}') 
                 add_informations(instance,depart, subject, indexing, date_start, date_end, obs)
                 save_button(instance, True)
                 alert_remove(instance)
