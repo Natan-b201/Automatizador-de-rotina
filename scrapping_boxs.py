@@ -52,7 +52,7 @@ def scrapping_b(instance, datas):
 
 
 def scrapping_folders_inf(instance, link):
-
+    sleep(2)
     values_data = dict()
     try:
         in_codigo = instance.driver.find_element_by_xpath("//mat-card/div/div[2]/mat-form-field[1]/div/div[1]/div/input")

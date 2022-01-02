@@ -88,22 +88,22 @@ class App:
 
     def plan_change(self):
         self.app.situation("Lendo arquivos de configuração ...")
-        self.dt = reading_json(convert_url('./config/boxs'))
+        dt = reading_json(convert_url('./config/boxs'))
         
-        if len(self.dt):
-            self.dt = self.dt[(len(self.dt))-1]
-            self.dt['boxs'] = self.dt['boxs'][(len(self.dt['boxs']))-1]
+        if len(dt):
+            dt = dt[(len(dt))-1]
+            dt['boxs'] = dt['boxs'][(len(dt['boxs']))-1]
         else:
-            self.dt =  {}
+            dt =  {}
 
         self.app.situation("Preparando tudo para o envio ...")
-        self.upl = update_xlsx(self.dt)
+        upl = update_xlsx(dt)
         
-        self.app.situation(f'Preparando para enviar {len(self.upl)} items')
-        for self.up in self.upl:
+        self.app.situation(f'Preparando para enviar {len(upl)} items')
+        for up in self.upl:
             
-            self.app.situation(f'Inserindo a caixa: {self.up["index"]}')
-            add_item(self.lg, self.up, self.app)
+            self.app.situation(f'Inserindo a caixa: {up["index"]}')
+            add_item(self.lg, up, self.app)
             
                 
         self.app.situation(f'Mapiando as informações ...')    
