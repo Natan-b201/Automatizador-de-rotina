@@ -1,17 +1,10 @@
-from login import Login
 from time import sleep
 import os
-from os import walk
 from scrapping_boxs import scan_items_in_sys
 from utils import element_is_load, reading_folders, verify_folders
 
 from file_monitoration import folder_is_change
 from utils import  create_json, reading_json, file_is_exists, convert_url
-
-
-# input_file = log.driver.find_element_by_xpath(f'//mat-table/mat-row[{row_temp}]/mat-cell[5]/label/input')
-#input_file.send_keys(location)
-# location = f'{os.getcwd()}/G.01.00.00004/G.01.00.00004.1/{fil["file_name"]}'
 
 # Verifica se teve mundaça
 

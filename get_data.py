@@ -1,6 +1,4 @@
 from time import sleep
-from bs4 import BeautifulSoup
-import pandas as pd
 from utils import option_select, trim, is_load_select
 from utils import get_table
 from selenium.webdriver.common.by import By
