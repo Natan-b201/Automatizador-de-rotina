@@ -101,5 +101,10 @@ class GlobalConfig:
             create_folder(data['index'], data['boxs'])
         
         app_info.situation("Pegando as informações das pastas ... ") if app_info else print("Pegando as informações das pastas ... ")
-        create_json(convert_url("./config/folders"), verify_folders())
+        try:
+            create_json(convert_url("./config/folders"), verify_folders(convert_url("./")))
+        except Exception as error:
+            app_info.situation(f'Erro ao verificar pastas: {error.__cause__}  ..') if app_info else print(f'Erro ao verificar pastas: {error.__cause__}  ..')
+        else:
+            app_info.situation("Informaçoes encontradas com sucesso  ... ") if app_info else print("Informaçoes encontradas com sucesso ... ")
 

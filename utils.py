@@ -248,7 +248,11 @@ def verify_folders(location="./"):
     lis = list()
 
     for  paths, subpath, files in walk(location):
-        name = paths.split(separator())[1]
+        try:
+            name = paths.split(separator())[1]
+        except:
+            print(f'Error: location {location}, Path: {paths}, Row 254 ')
+            name = paths.split(separator())[0]
 
         if name != "config" and name != "":
             if len(subpath):
